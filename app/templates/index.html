@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medicinal Supply Monitoring</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --secondary: #6c757d;
+      --success: #198754;
+      --danger: #dc3545;
+      --light: #f8f9fa;
+      --dark: #212529;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      transition: background-color 0.3s ease;
+    }
+    
+    .theme-dark {
+      background-color: #212529;
+      color: #f8f9fa;
+    }
+    
+    .theme-dark .card {
+      background-color: #343a40;
+      color: #f8f9fa;
+      border-color: #495057;
+    }
+    
+    .theme-dark .table {
+      color: #f8f9fa;
+    }
+    
+    .navbar {
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.8) !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .theme-dark .navbar {
+      background-color: rgba(33, 37, 41, 0.8) !important;
+    }
+    
+    .card {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 24px;
+      border: none;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+      background-color: rgba(0, 0, 0, 0.03);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      font-weight: 600;
+    }
+    
+    .theme-dark .card-header {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .table {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .table th {
+      font-weight : 600;
+      border-top: none;
+    }
+    
+    .table-container {
+      border-radius: 16px;
+      overflow: auto;
+      margin-bottom: 24px;
+      max-height: 400px;
+    }
+    
+    .table-hover tbody tr:hover {
+      background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .theme-dark .table-hover tbody tr:hover {
+      background-color: rgba(13, 110, 253, 0.15);
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+    }
+    
+    .nav-link {
+      position: relative;
+      margin: 0 10px;
+      padding: 5px 0;
+      font-weight: 500;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .badge {
+      border-radius: 50rem;
+      padding: 5px 10px;
+      font-weight: 500;
+    }
+    
+    .dashboard-header {
+      position: relative;
+      padding: 60px 0 30px;
+      margin-bottom: 30px;
+      background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+      border-radius: 0 0 20px 20px;
+      color: white;
+      text-align: center;
+    }
+    
+    .dashboard-header h1 {
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+    
+    .floating-card {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .card-statistic {
+      padding: 20px;
+      text-align: center;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    .card-statistic i {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+    
+    .card-statistic h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    
+    .card-statistic p {
+      color: var(--secondary);
+      margin-bottom: 0;
+    }
+    
+    .theme-dark .card-statistic p {
+      color: #adb5bd;
+    }
+    
+    .alert-item {
+      border-left: 4px solid;
+      padding: 12px 20px;
+      margin-bottom: 10px;
+      background-color: white;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .theme-dark .alert-item {
+      background-color: #343a40;
+    }
+    
+    .alert-item:hover {
+      transform: translateX(5px);
+    }
+    
+    .alert-item.alert-danger {
+      border-left-color: var(--danger);
+    }
+    
+    .alert-item.alert-warning {
+      border-left-color: #ffc107;
+    }
+    
+    .alert-item.alert-info {
+      border-left-color: #0dcaf0;
+    }
+    
+    .product-image {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      transition: transform 0.2s ease;
+    }
+    
+    .product-image:hover {
+      transform: scale(3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .status-badge {
+      padding: 5px 12px;
+      border-radius: 50rem;
+      font-weight: 500;
+    }
+    
+    .status-badge.pass {
+      background-color: rgba(25, 135, 84, 0.15);
+      color: var(--success);
+    }
+    
+    .status-badge.fail {
+      background-color: rgba(220, 53, 69, 0.15);
+      color: var(--danger);
+    }
+    
+    .theme-dark .status-badge.pass {
+      background-color: rgba(25, 135, 84, 0.3);
+    }
+    
+    .theme-dark .status-badge.fail {
+      background-color: rgba(220, 53, 69, 0.3);
+    }
+    
+    #theme-toggle {
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+    
+    #theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .theme-dark #theme-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--secondary);
+    }
+    
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      opacity: 0.3;
+    }
+    
+    .loader {
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .search-box {
+      position: relative;
+      max-width: 300px;
+    }
+    
+    .search-box input {
+      border-radius: 50rem;
+      padding-left: 40px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--secondary);
+    }
+    
+    .search-box input:focus {
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      border-color: #86b7fe;
+    }
+    
+    .theme-dark .search-box input {
+      background-color: #343a40;
+      border-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .btn-pill {
+      border-radius: 50rem;
+      padding: 8px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .card-statistic {
+        margin-bottom: 20px;
+      }
+      
+      .dashboard-header {
+        padding: 40px 0 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand text-primary" href="/">
+        <i class="fas fa-pills me-2"></i>MedSupply
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="/"><i class="fas fa-chart-line me-1"></i>Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quality_dashboard"><i class="fas fa-check-circle me-1"></i>Quality</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quality_upload"><i class="fas fa-upload me-1"></i>Inspection</a>
+          </li>
+          <li class="nav-item ms-2">
+            <div id="theme-toggle" class="nav-link">
+              <i class="fas fa-moon"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Header -->
+  <header class="dashboard-header animate__animated animate__fadeIn">
+    <div class="container">
+      <h1 class="display-5"><i class="fas fa-flask me-2"></i>Medicinal Quality Monitoring</h1>
+      <p class="lead">Real-time tracking and analysis system</p>
+    </div>
+  </header>
+
+  <div class="container py-4">
+    <!-- Statistics Cards -->
+    <div class="row mb-4" data-aos="fade-up" data-aos-delay="100">
+      <div class="col-md-3 mb-4 mb-md-0">
+        <div class="card card-statistic floating-card" style="animation-delay: 0s;">
+          <div class="card-body">
+            <i class="fas fa-box text-primary"></i>
+            <h3 id="total-products">0</h3>
+            <p>Total Products</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-4 mb-md-0">
+        <div class="card card-statistic floating-card" style="animation-delay: 0.5s;">
+          <div class="card-body">
+            <i class="fas fa-check-circle text-success"></i>
+            <h3 id="pass-count">0</h3>
+            <p>Quality Passes</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-4 mb-md-0">
+        <div class="card card-statistic floating-card" style="animation-delay: 1s;">
+          <div class="card-body">
+            <i class="fas fa-exclamation-circle text-danger"></i>
+            <h3 id="fail-count">0</h3>
+            <p>Quality Failures</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card card-statistic floating-card" style="animation-delay: 1.5s;">
+          <div class="card-body">
+            <i class="fas fa-bell text-warning"></i>
+            <h3 id="alert-count">0</h3>
+            <p>Active Alerts</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Left Column -->
+      <div class="col-lg-8">
+        <!-- Products Table -->
+        <div class="card" data-aos="fade-up">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+              <i class="fas fa-box-open me-2"></i>Current Products
+            </div>
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" class="form-control" id="product-search" placeholder="Search products...">
+            </div>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-container">
+              <table class="table table-hover" id="product-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Manufacturer</th>
+                    <th>Expiry Date</th>
+                    <th>Stock</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Products will be loaded here -->
+                  <tr>
+                    <td colspan="6">
+                      <div class="loading-container">
+                        <div class="loader"></div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quality Inspection Results -->
+        <div class="card" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-header">
+            <i class="fas fa-clipboard-check me-2"></i>Quality Inspection Results
+          </div>
+          <div class="card-body p-0">
+            <div class="table-container">
+              <table class="table table-hover" id="inspection-table">
+                <thead>
+                  <tr>
+                    <th>Product ID</th>
+                    <th>Product</th>
+                    <th>Status</th>
+                    <th>Confidence</th>
+                    <th>Image</th>
+                    <th>Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Inspections will be loaded here -->
+                  <tr>
+                    <td colspan="6">
+                      <div class="loading-container">
+                        <div class="loader"></div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="col-lg-4">
+        <!-- Alerts -->
+        <div class="card" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-header">
+            <i class="fas fa-bell me-2"></i>Real-Time Alerts
+          </div>
+          <div class="card-body p-0">
+            <div class="p-3" id="alerts-list">
+              <!-- Alerts will be loaded here -->
+              <div class="loading-container">
+                <div class="loader"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prediction Chart -->
+        <div class="card" data-aos="fade-up" data-aos-delay="300">
+          <div class="card-header">
+            <i class="fas fa-chart-line me-2"></i>Demand Predictions
+          </div>
+          <div class="card-body">
+            <canvas id="predictionChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Initialize AOS animation library
+    document.addEventListener('DOMContentLoaded', function() {
+      AOS.init({
+        duration: 800,
+        once: true
+      });
+      
+      // Theme toggler
+      const body = document.body;
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = themeToggle.querySelector('i');
+      
+      // Check for saved theme preference
+      if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('theme-dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      }
+      
+      themeToggle.addEventListener('click', () => {
+        body.classList.toggle('theme-dark');
+        
+        if (body.classList.contains('theme-dark')) {
+          themeIcon.classList.replace('fa-moon', 'fa-sun');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          themeIcon.classList.replace('fa-sun', 'fa-moon');
+          localStorage.setItem('theme', 'light');
+        }
+      });
+
+      // Search functionality
+      document.getElementById('product-search').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('#product-table tbody tr');
+        
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+      });
+      
+      // Load data with animations
+      loadData();
+    });
+
+    // Format date strings
+    const formatDate = dateStr => {
+      return new Date(dateStr).toLocaleString('en-GB', {
+        day: '2-digit', 
+        month: 'short', 
+        year: 'numeric',
+        hour: '2-digit', 
+        minute: '2-digit'
+      });
+    };
+    
+    // Load all data with animations
+    function loadData() {
+      // Fetch and display products with animation
+      fetch('/products')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#product-table tbody');
+          tbody.innerHTML = '';
+          
+          if (data.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="6">
+                  <div class="empty-state">
+                    <i class="fas fa-box-open"></i>
+                    <p>No products available</p>
+                  </div>
+                </td>
+              </tr>`;
+            return;
+          }
+          
+          // Update statistics
+          document.getElementById('total-products').textContent = data.length;
+          
+          // Add rows with staggered animation
+          data.forEach((p, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${p.id}</td>
+              <td>${p.name}</td>
+              <td>${p.category}</td>
+              <td>${p.manufacturer}</td>
+              <td>${new Date(p.expiry_date).toLocaleDateString()}</td>
+              <td>
+                <span class="badge ${p.current_stock < 10 ? 'bg-danger' : 'bg-success'}">${p.current_stock}</span>
+              </td>`;
+            
+            // Add animation with delay based on index
+            tr.classList.add('animate__animated', 'animate__fadeInRight');
+            tr.style.animationDelay = `${index * 0.05}s`;
+            
+            tbody.appendChild(tr);
+          });
+        });
+
+      // Fetch and display inspections with animation
+      fetch('/inspections')
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#inspection-table tbody');
+          tbody.innerHTML = '';
+          
+          if (data.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="6">
+                  <div class="empty-state">
+                    <i class="fas fa-clipboard-check"></i>
+                    <p>No inspections yet</p>
+                  </div>
+                </td>
+              </tr>`;
+            return;
+          }
+          
+          // Count passes and fails for statistics
+          const passes = data.filter(i => i.quality_status === 'Pass').length;
+          const fails = data.filter(i => i.quality_status === 'Fail').length;
+          
+          document.getElementById('pass-count').textContent = passes;
+          document.getElementById('fail-count').textContent = fails;
+          
+          // Update with animation
+          data.forEach((i, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${i.product_id}</td>
+              <td>${i.product_name}</td>
+              <td><span class="status-badge ${i.quality_status.toLowerCase()}">${i.quality_status}</span></td>
+              <td>${(i.confidence_score * 100).toFixed(1)}%</td>
+              <td><img src="/static/${i.image_path}" class="product-image" alt="Product"></td>
+              <td>${formatDate(i.inspection_time)}</td>`;
+            
+            tr.classList.add('animate__animated', 'animate__fadeInRight');
+            tr.style.animationDelay = `${index * 0.05}s`;
+            
+            tbody.appendChild(tr);
+          });
+        });
+
+      // Fetch and display alerts with animation
+      fetch('/alerts')
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById('alerts-list');
+          list.innerHTML = '';
+          
+          if (data.length === 0) {
+            list.innerHTML = `
+              <div class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <p>No alerts at this time</p>
+              </div>`;
+            return;
+          }
+          
+          // Update statistics
+          document.getElementById('alert-count').textContent = data.length;
+          
+          // Create alerts with animation
+          data.forEach((a, index) => {
+            let alertType = 'info';
+            if (a.alert_type.includes('Low')) alertType = 'warning';
+            if (a.alert_type.includes('Fail')) alertType = 'danger';
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert-item alert-${alertType} animate__animated animate__fadeInRight`;
+            alertDiv.style.animationDelay = `${index * 0.1}s`;
+            
+            alertDiv.innerHTML = `
+              <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                  <strong>${a.alert_type}</strong>
+                  <p class="mb-0">${a.message}</p>
+                  <small class="text-muted">${formatDate(a.timestamp)}</small>
+                </div>
+              </div>`;
+            
+            list.appendChild(alertDiv);
+          });
+        });
+
+      // Prediction Chart with animation
+      fetch('/predictions')
+        .then(res => res.json())
+        .then(data => {
+          const labels = data.map(p => {
+            const date = new Date(p.predicted_date);
+            return `${date.getDate()}/${date.getMonth() + 1}`;
+          });
+          const values = data.map(p => p.predicted_demand);
+
+          const ctx = document.getElementById('predictionChart').getContext('2d');
+          
+          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+          gradient.addColorStop(0, 'rgba(13, 110, 253, 0.5)');
+          gradient.addColorStop(1, 'rgba(13, 110, 253, 0)');
+          
+          const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Predicted Demand',
+                data: values,
+                fill: true,
+                backgroundColor: gradient,
+                borderColor: '#0d6efd',
+                borderWidth: 2,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#0d6efd',
+                pointRadius: 4,
+                tension: 0.4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: true,
+              animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                  }
+                },
+                x: {
+                  grid: {
+                    display: false
+                  }
+                }
+              },
+              plugins: {
+                legend: {
+                  display: false
+                }
+              }
+            }
+          });
+          
+          // Set up theme change listener for chart
+          document.getElementById('theme-toggle').addEventListener('click', () => {
+            const isDark = document.body.classList.contains('theme-dark');
+            
+            chart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)';
+            chart.update();
+          });
+        });
+    }
+    
+    // Auto-refresh data every 30 seconds
+    setInterval(loadData, 30000);
+  </script>
+</body>
+</html>

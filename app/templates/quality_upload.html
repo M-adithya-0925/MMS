@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quality Inspection Upload</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0d6efd;
+      --secondary: #6c757d;
+      --success: #198754;
+      --danger: #dc3545;
+      --light: #f8f9fa;
+      --dark: #212529;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      transition: background-color 0.3s ease;
+    }
+    
+    .theme-dark {
+      background-color: #212529;
+      color: #f8f9fa;
+    }
+    
+    .theme-dark .card {
+      background-color: #343a40;
+      color: #f8f9fa;
+      border-color: #495057;
+    }
+    
+    .navbar {
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.8) !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .theme-dark .navbar {
+      background-color: rgba(33, 37, 41, 0.8) !important;
+    }
+    
+    .card {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 24px;
+      border: none;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-header {
+      background-color: rgba(0, 0, 0, 0.03);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      font-weight: 600;
+    }
+    
+    .theme-dark .card-header {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+    }
+    
+    .nav-link {
+      position: relative;
+      margin: 0 10px;
+      padding: 5px 0;
+      font-weight: 500;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .dashboard-header {
+      position: relative;
+      padding: 60px 0 30px;
+      margin-bottom: 30px;
+      background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+      border-radius: 0 0 20px 20px;
+      color: white;
+      text-align: center;
+    }
+    
+    .dashboard-header h1 {
+      font-weight: 700;
+      margin-bottom: 0;
+    }
+    
+    #theme-toggle {
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+    
+    #theme-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .theme-dark #theme-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    /* Form specific styles */
+    .form-control {
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .theme-dark .form-control {
+      background-color: #343a40;
+      border-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .form-control:focus {
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+      border-color: #86b7fe;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    
+    .theme-dark .form-label {
+      color: #e9ecef;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(13, 110, 253, 0.3);
+      background: linear-gradient(45deg, #0b5ed7, #0bbce2);
+    }
+    
+    .form-floating > .form-control {
+      padding-top: 1.625rem;
+      padding-bottom: 0.625rem;
+      height: calc(3.5rem + 2px);
+    }
+    
+    .form-floating > label {
+      padding: 1rem 0.75rem;
+    }
+    
+    .file-upload {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px dashed rgba(13, 110, 253, 0.3);
+      border-radius: 8px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .theme-dark .file-upload-label {
+      border-color: rgba(13, 110, 253, 0.5);
+      background-color: rgba(13, 110, 253, 0.1);
+    }
+    
+    .file-upload-label:hover {
+      border-color: rgba(13, 110, 253, 0.8);
+      background-color: rgba(13, 110, 253, 0.1);
+    }
+    
+    .file-upload input[type="file"] {
+      position: absolute;
+      width: 0.1px;
+      height: 0.1px;
+      opacity: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+    
+    .file-upload-icon {
+      font-size: 3rem;
+      color: #0d6efd;
+      margin-bottom: 10px;
+    }
+    
+    .file-upload-text {
+      display: block;
+      font-weight: 500;
+    }
+    
+    .file-name {
+      margin-top: 10px;
+      font-size: 0.875rem;
+      color: var(--secondary);
+      word-break: break-all;
+    }
+    
+    .theme-dark .file-name {
+      color: #adb5bd;
+    }
+    
+    .progress-wrapper {
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .preview-image {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      margin-top: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+    
+    /* Success animation */
+    @keyframes checkmark {
+      0% {
+        stroke-dashoffset: 100;
+      }
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+    
+    .checkmark {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: block;
+      stroke-width: 2;
+      stroke: #4bb71b;
+      stroke-miterlimit: 10;
+      box-shadow: inset 0px 0px 0px #4bb71b;
+      margin: 0 auto;
+      display: none;
+    }
+    
+    .checkmark__circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: #4bb71b;
+      fill: none;
+      animation: checkmark 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    
+    .checkmark__check {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: checkmark 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-header {
+        padding: 40px 0 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand text-primary" href="/">
+        <i class="fas fa-pills me-2"></i>MedSupply
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/"><i class="fas fa-chart-line me-1"></i>Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quality_dashboard"><i class="fas fa-check-circle me-1"></i>Quality</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/quality_upload"><i class="fas fa-upload me-1"></i>Inspection</a>
+          </li>
+          <li class="nav-item ms-2">
+            <div id="theme-toggle" class="nav-link">
+              <i class="fas fa-moon"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Header -->
+  <header class="dashboard-header animate__animated animate__fadeIn">
+    <div class="container">
+      <h1 class="display-5"><i class="fas fa-microscope me-2"></i>Quality Inspection Upload</h1>
+      <p class="lead">Upload product samples for AI quality analysis</p>
+    </div>
+  </header>
+
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card" data-aos="fade-up">
+          <div class="card-header">
+            <i class="fas fa-upload me-2"></i>Upload Product for Quality Inspection
+          </div>
+          <div class="card-body">
+            <form id="uploadForm" action="/upload_quality" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+              <div class="row g-3">
+                <!-- Product Information -->
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Product Name" required>
+                    <label for="name">Product Name</label>
+                    <div class="invalid-feedback">
+                      Please enter a product name.
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="category" name="category" placeholder="Category" required>
+                    <label for="category">Category</label>
+                    <div class="invalid-feedback">
+                      Please enter a category.
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="manufacturer" name="manufacturer" placeholder="Manufacturer" required>
+                    <label for="manufacturer">Manufacturer</label>
+                    <div class="invalid-feedback">
+                      Please enter a manufacturer.
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="date" class="form-control" id="expiry_date" name="expiry_date" required>
+                    <label for="expiry_date">Expiry Date</label>
+                    <div class="invalid-feedback">
+                      Please enter a valid expiry date.
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="number" class="form-control" id="stock" name="stock" placeholder="Stock Amount" min="1" required>
+                    <label for="stock">Stock Amount</label>
+                    <div class="invalid-feedback">
+                      Please enter a valid stock amount.
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- File Upload -->
+                <div class="col-12 mt-3">
+                  <div class="file-upload">
+                    <label for="imageUpload" class="file-upload-label">
+                      <div class="text-center">
+                        <i class="fas fa-cloud-upload-alt file-upload-icon"></i>
+                        <span class="file-upload-text">Drag and drop an image or click to browse</span>
+                        <span class="file-name"></span>
+                      </div>
+                    </label>
+                    <input type="file" id="imageUpload" name="image" accept="image/*" required>
+                    <div class="invalid-feedback">
+                      Please upload an image for quality inspection.
+                    </div>
+                  </div>
+                  
+                  <img id="preview" class="preview-image" alt="Preview">
+                  
+                  <div class="progress-wrapper">
+                    <div class="progress" style="height: 10px;">
+                      <div class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Success animation -->
+                <div class="col-12 text-center mt-4">
+                  <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                  </svg>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="col-12 text-center mt-4">
+                  <button type="submit" class="btn btn-primary px-5 animate__animated animate__pulse animate__infinite" style="animation-duration: 2s;">
+                    <i class="fas fa-microscope me-2"></i>Upload & Analyze Quality
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <!-- Tips Card -->
+        <div class="card" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-header">
+            <i class="fas fa-lightbulb me-2"></i>Quality Inspection Tips
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 text-center mb-3 mb-md-0">
+                <i class="fas fa-camera text-primary" style="font-size: 2rem;"></i>
+                <h5 class="mt-3">Clear Images</h5>
+                <p class="text-muted">Use well-lit, high-resolution images for better analysis results.</p>
+              </div>
+              <div class="col-md-4 text-center mb-3 mb-md-0">
+                <i class="fas fa-ruler-combined text-primary" style="font-size: 2rem;"></i>
+                <h5 class="mt-3">Proper Framing</h5>
+                <p class="text-muted">Center the product and capture all relevant details in the frame.</p>
+              </div>
+              <div class="col-md-4 text-center">
+                <i class="fas fa-palette text-primary" style="font-size: 2rem;"></i>
+                <h5 class="mt-3">Consistent Background</h5>
+                <p class="text-muted">Use a neutral, contrasting background for best results.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      AOS.init({
+        duration: 800,
+        once: true
+      });
+      
+      // Theme toggler
+      const body = document.body;
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeIcon = themeToggle.querySelector('i');
+      
+      // Check for saved theme preference
+      if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('theme-dark');
+        themeIcon.classList.replace('fa-moon', 'fa-sun');
+      }
+      
+      themeToggle.addEventListener('click', () => {
+        body.classList.toggle('theme-dark');
+        
+        if (body.classList.contains('theme-dark')) {
+          themeIcon.classList.replace('fa-moon', 'fa-sun');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          themeIcon.classList.replace('fa-sun', 'fa-moon');
+          localStorage.setItem('theme', 'light');
+        }
+      });
+      
+      // Form validation
+      const form = document.getElementById('uploadForm');
+      const imageUpload = document.getElementById('imageUpload');
+      const fileNameDisplay = document.querySelector('.file-name');
+      const previewImage = document.getElementById('preview');
+      const progressWrapper = document.querySelector('.progress-wrapper');
+      const progressBar = document.querySelector('.progress-bar');
+      const checkmark = document.querySelector('.checkmark');
+      
+      // File upload preview
+      imageUpload.addEventListener('change', function(e) {
+        const file = this.files[0];
+        
+        if (file) {
+          const fileName = file.name;
+          fileNameDisplay.textContent = fileName;
+          
+          // Show image preview
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+            
+            // Animate entrance
+            previewImage.classList.add('animate__animated', 'animate__fadeIn');
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      // Prevent the default form action and use fetch instead
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        if (!form.checkValidity()) {
+          event.stopPropagation();
+          form.classList.add('was-validated');
+          return;
+        }
+        
+        const formData = new FormData(this);
+        
+        // Animate progress bar
+        progressWrapper.style.display = 'block';
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 5;
+          progressBar.style.width = `${progress}%`;
+          
+          if (progress >= 100) {
+            clearInterval(interval);
+            progressWrapper.style.display = 'none';
+            checkmark.style.display = 'block';
+            
+            // Redirect after a delay
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 1500);
+          }
+        }, 100);
+        
+        // Send the form data
+        fetch('/upload_quality', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Stop the progress animation and show error
+          clearInterval(interval);
+          progressWrapper.style.display = 'none';
+          alert('Upload failed. Please try again.');
+        });
+      });
+      
+      // Drag and drop functionality
+      const dropZone = document.querySelector('.file-upload-label');
+      
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        dropZone.classList.add('border-primary');
+      }
+      
+      function unhighlight() {
+        dropZone.classList.remove('border-primary');
+      }
+      
+      dropZone.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length) {
+          imageUpload.files = files;
+          
+          // Trigger change event
+          const event = new Event('change', { bubbles: true });
+          imageUpload.dispatchEvent(event);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
